@@ -2,33 +2,36 @@
 #![no_main]
 
 use embassy_executor::Spawner;
-use embassy_lpc55::gpio;
-use gpio::{Level, Output};
+use embassy_lpc55::hal::{self as hal, traits::wg::digital::v2::OutputPin};
 use panic_halt as _;
 
 use cortex_m::asm::nop;
 
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) {
-    let p = embassy_lpc55::init(Default::default());
-    let led = Output::new(p.LED_GREEN, Level::Low);
+    let p = hal::new();
+    
+    let mut syscon = p.syscon;
+    let mut gpio = p.gpio.enabled(&mut syscon);
+    let mut iocon = p.iocon.enabled(&mut syscon);
 
-    led.toggle();
-    // let x = pac::Peripherals::take().unwrap();
-    // x.GPIO.dir[1].write(|w| unsafe { w.bits(1 << 6) });
+    let pins = hal::Pins::take().unwrap();
+
+    let mut led = pins
+        .pio1_6
+        .into_gpio_pin(&mut iocon, &mut gpio)
+        .into_output_high();
 
     loop {
-        led.set_high();
-        // x.GPIO.not[1].write(|w| unsafe { w.bits(1 << 6) });
+        led.set_high().unwrap();
 
-        for _ in 0 .. 50_000 {
+        for _ in 0 .. 200_000 {
             nop();
         }
 
-        led.set_low();
-
+        led.set_low().unwrap();
         
-        for _ in 0 .. 50_000 {
+        for _ in 0 .. 200_000 {
             nop();
         }
     }
