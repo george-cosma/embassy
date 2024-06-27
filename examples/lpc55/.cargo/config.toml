@@ -6,8 +6,3 @@ target = "thumbv8m.main-none-eabi"
 
 [env]
 DEFMT_LOG = "debug"
-
-[target.thumbv8m.main-none-eabi]
-rustflags = [
-  "-C", "link-arg=-Tlink.x",
-]

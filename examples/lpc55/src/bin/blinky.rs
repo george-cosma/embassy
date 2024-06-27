@@ -1,9 +1,11 @@
 #![no_std]
 #![no_main]
 
+use defmt::*;
 use embassy_executor::Spawner;
 use embassy_lpc55::hal::{self as hal, traits::wg::digital::v2::OutputPin};
 use panic_halt as _;
+use defmt_rtt as _;
 
 use cortex_m::asm::nop;
 
@@ -23,12 +25,14 @@ async fn main(_spawner: Spawner) {
         .into_output_high();
 
     loop {
+        info!("led off!");
         led.set_high().unwrap();
 
         for _ in 0 .. 200_000 {
             nop();
         }
 
+        info!("led on!");
         led.set_low().unwrap();
         
         for _ in 0 .. 200_000 {
