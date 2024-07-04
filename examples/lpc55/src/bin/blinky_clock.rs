@@ -3,7 +3,7 @@
 
 use defmt::*;
 use embassy_executor::Spawner;
-use embassy_lpc55::hal as hal;
+use embassy_lpc55::hal::{self as hal, raw::syscon::ctimerclksel1};
 use hal::prelude::*;
 use nb::block;
 use panic_halt as _;
